@@ -46,6 +46,25 @@ fun Application.configureAppointmentsRouting() {
                 Appointments.insert(appointment)
                 call.respondText("Appointment created successfully")
             }
+
+            put("/{id}/status") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing or invalid appointment ID")
+                    return@put
+                }
+
+                val params = call.receiveParameters()
+                val newStatus = params["status"]
+
+                if (newStatus.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing status")
+                    return@put
+                }
+
+                Appointments.updateStatus(id, newStatus)
+                call.respondText("Status updated successfully")
+            }
         }
     }
 }

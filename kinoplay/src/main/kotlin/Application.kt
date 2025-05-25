@@ -1,10 +1,12 @@
 package com.example
 
+import com.example.database.appointments.Appointments
 import com.example.database.appointments.configureAppointmentsRouting
 import com.example.database.branches.Branches
 import com.example.database.branches.configureBranchesRouting
 import com.example.database.specialists.Specialists
 import com.example.database.specialists.configureSpecialistsRouting
+import com.example.database.specialities.Specialities
 import com.example.database.specialities.configureSpecialitiesRouting
 import com.example.database.tokens.Tokens
 import com.example.database.users.Users
@@ -26,7 +28,7 @@ fun main() {
     )
 
     transaction {
-        SchemaUtils.create(Users, Tokens, Specialists, Branches)
+        SchemaUtils.create(Users, Tokens, Specialists, Branches, Specialities, Appointments)
     }
 
     embeddedServer(CIO, port = 8081, host = "0.0.0.0", module = Application::module)

@@ -51,4 +51,12 @@ object Appointments : Table("appointments") {
                 )
             }
     }
+
+    fun updateStatus(appointmentId: Int, newStatus: String) {
+        transaction {
+            Appointments.update({ Appointments.id eq appointmentId }) {
+                it[status] = newStatus
+            }
+        }
+    }
 }
