@@ -20,6 +20,9 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-server-auth:2.3.3")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.45.0")
+
     implementation(libs.ktor.server.content.negotiation)
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.serialization.kotlinx.json)
