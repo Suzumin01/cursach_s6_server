@@ -1,6 +1,8 @@
 package com.example.database.appointments
 
+import com.example.database.branches.Branches
 import com.example.database.specialists.Specialists
+import com.example.database.specialities.Specialities
 import com.example.database.users.Users
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -58,5 +60,25 @@ object Appointments : Table("appointments") {
                 it[status] = newStatus
             }
         }
+    }
+
+    fun getDetailedByUserLogin(login: String): List<AppointmentWithSpecialistDTO> = transaction {
+        (Appointments innerJoin Specialists innerJoin Specialities innerJoin Branches)
+            .selectAll().where { userLogin eq login }
+            .map {
+                val specialist = Specialists.alias("s")
+                val fullName = "${it[Specialists.lastName]} ${it[Specialists.firstName]} ${it[Specialists.middleName] ?: ""}".trim()
+
+                AppointmentWithSpecialistDTO(
+                    id = it[Appointments.id],
+                    userLogin = it[userLogin],
+                    specialistId = it[specialistId],
+                    dateTime = it[dateTime],
+                    status = it[status],
+                    specialistFullName = fullName,
+                    speciality = it[Specialities.name],
+                    branchName = it[Branches.name]
+                )
+            }
     }
 }
