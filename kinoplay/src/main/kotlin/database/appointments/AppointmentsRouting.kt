@@ -65,6 +65,24 @@ fun Application.configureAppointmentsRouting() {
                 Appointments.updateStatus(id, newStatus)
                 call.respondText("Status updated successfully")
             }
+
+            get("/{login}/detailed") {
+                val login = call.parameters["login"]
+
+                if (login.isNullOrBlank()) {
+                    call.respond(HttpStatusCode.BadRequest, "Missing user login")
+                    return@get
+                }
+
+                val user = Users.fetchUser(login)
+                if (user == null) {
+                    call.respond(HttpStatusCode.NotFound, "User not found")
+                    return@get
+                }
+
+                val appointments = Appointments.getDetailedByUserLogin(login)
+                call.respond(appointments)
+            }
         }
     }
 }
