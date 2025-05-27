@@ -83,6 +83,21 @@ fun Application.configureAppointmentsRouting() {
                 val appointments = Appointments.getDetailedByUserLogin(login)
                 call.respond(appointments)
             }
+
+            get("/id/{id}") {
+                val id = call.parameters["id"]?.toIntOrNull()
+                if (id == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid ID")
+                    return@get
+                }
+
+                val appointment = Appointments.getById(id)
+                if (appointment == null) {
+                    call.respond(HttpStatusCode.NotFound, "Appointment not found")
+                } else {
+                    call.respond(appointment)
+                }
+            }
         }
     }
 }

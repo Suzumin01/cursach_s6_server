@@ -81,4 +81,25 @@ object Appointments : Table("appointments") {
                 )
             }
     }
+
+    fun getById(id: Int): AppointmentWithSpecialistDTO? = transaction {
+        (Appointments innerJoin Specialists innerJoin Specialities innerJoin Branches)
+            .selectAll().where { Appointments.id eq id }
+            .mapNotNull {
+                val fullName = "${it[Specialists.lastName]} ${it[Specialists.firstName]} ${it[Specialists.middleName] ?: ""}".trim()
+
+                AppointmentWithSpecialistDTO(
+                    id = it[Appointments.id],
+                    userLogin = it[Appointments.userLogin],
+                    specialistId = it[Appointments.specialistId],
+                    dateTime = it[Appointments.dateTime],
+                    status = it[Appointments.status],
+                    specialistFullName = fullName,
+                    speciality = it[Specialities.name],
+                    branchName = it[Branches.name]
+                )
+            }
+            .singleOrNull()
+    }
+
 }
